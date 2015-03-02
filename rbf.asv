@@ -1,0 +1,17 @@
+function y = rbf(x, params)
+    if ~isvector(x)
+        error('the input must be a vector');
+    end
+    if isrow(x)
+        x = x';
+    end
+    
+    % get parameters
+    c = params.c;       % mean
+    B = params.B;       % inverse of B
+    N = params.Nrbf;    % no of rbfs
+    
+    % pre-process input
+    x = repmat(x, [
+    y = exp(-0.5*(x-c)'*B*(x-c));
+    

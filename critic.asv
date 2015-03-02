@@ -1,0 +1,3 @@
+function V = critic(state, param)
+    % Obtain parameters
+    state

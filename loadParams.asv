@@ -1,0 +1,23 @@
+params.Ntrial = 100;                        % no of trials
+params.NrbfX = 10;                          % no of rbfs in q dimension
+params.NrbfY = 10;                          % no of rbfs in qdot dimension
+
+params.phi = ones(params.NrbfX,1);          % actor parameters
+params.theta = ones(params.NrbfY,1);        % critic parameters
+
+% generate center of rbf (2xN matrix)
+qc = linspace(-pi, pi, params.NrbfX);   
+qc = repmat(qc, [params.NrbfY,1]);
+qc = reshape(qc, [1, params.NrbfX*params.NrbfY]);
+qdotc = linspace(-25, 25, params.NrbfY);
+qdotc = repmat(qdotc, [1, params.NrbfX]);
+params.c = [qc; qdotc];                     % center coordinate of all rbfs
+
+params.t_end = 5;                           % final time    [s]
+params.ts = 1/125;                          % sampling time [s]
+
+% RL parameters
+params.B = [1 0; 0 1];
+params.R = 1;
+params.Q = [10 0; 0 3];
+params.alpha = 0.01;

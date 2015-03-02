@@ -1,0 +1,18 @@
+N = 100; % discritization
+x1 = linspace(-1,1,N);
+x2 = linspace(-1,1,N);
+X1 = repmat(x1, [N,1]);
+X1 = reshape(X1, [1, N*N]);
+X2 = repmat(x2, [1, N]);
+X = [X1; X2];
+
+c = [0; 0];
+c = repmat(c,[1,N]);
+B = [10 0; 0 5];
+X1 = repmat(x(1,:), [N, 1]);
+X2 = repmat(transpose(x(2,:)), [1, N]);
+Phi = exp(-0.5*(x-c)'*inv(B)*(x-c));
+Phi = diag(Phi);
+Phi = reshape(N,N);
+figure;
+surf(X1,X2,10*Phi)
