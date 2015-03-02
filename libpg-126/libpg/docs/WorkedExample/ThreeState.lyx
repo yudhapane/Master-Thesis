@@ -1,0 +1,799 @@
+#LyX 1.3 created this file. For more info see http://www.lyx.org/
+\lyxformat 221
+\textclass article
+\language english
+\inputencoding auto
+\fontscheme default
+\graphics default
+\paperfontsize default
+\papersize Default
+\paperpackage a4
+\use_geometry 0
+\use_amsmath 0
+\use_natbib 0
+\use_numerical_citations 0
+\paperorientation portrait
+\secnumdepth 3
+\tocdepth 3
+\paragraph_separation indent
+\defskip medskip
+\quotes_language english
+\quotes_times 2
+\papercolumns 1
+\papersides 1
+\paperpagestyle default
+
+\layout Section
+
+Introduction
+\layout Standard
+
+This report shows a comparison between the results of running several different
+ reinforcement learning algorithms and policies on the three state problem,
+ running on a simulated environment.
+ All the implementation is provided by libPG library.
+ To make the comparison as fair as possible, every algorithm uses a specifically
+ tuned-up set of parameters values (
+\begin_inset Formula $\kappa$
+\end_inset 
+
+, 
+\begin_inset Formula $\alpha$
+\end_inset 
+
+, 
+\begin_inset Formula $\lambda$
+\end_inset 
+
+ and 
+\begin_inset Formula $\epsilon$
+\end_inset 
+
+), which were found by exhaustive search.
+\layout Standard
+
+With softmax policy, the temperature decaying function used was 
+\begin_inset Formula $T(t)=\frac{1}{^{\left(1+\kappa t\right)2}}$
+\end_inset 
+
+ , where 
+\begin_inset Formula $t$
+\end_inset 
+
+ is the current time step and 
+\begin_inset Formula $\kappa$
+\end_inset 
+
+ is a constant.
+ Similarly, with 
+\begin_inset Formula $\epsilon$
+\end_inset 
+
+-greedy policy, the 
+\begin_inset Formula $\epsilon$
+\end_inset 
+
+ decaying function used was 
+\begin_inset Formula $\epsilon(t)=\frac{1}{^{\left(1+\kappa t\right)2}}$
+\end_inset 
+
+.
+ In both cases the constant 
+\begin_inset Formula $\kappa$
+\end_inset 
+
+ defines how fast the used policy becomes greedier with time, when selecting
+ next actions.
+ The others parameters, 
+\begin_inset Formula $\alpha$
+\end_inset 
+
+ and 
+\begin_inset Formula $\lambda$
+\end_inset 
+
+, stands for step size and eligibility traces, respectively.
+\layout Standard
+
+The results of each algorithm and policy combination were averaged over
+ 
+\begin_inset Formula 100
+
+\end_inset 
+
+ runs and the temporal difference discount used was 
+\begin_inset Formula $\gamma=0.6$
+\end_inset 
+
+ in all cases.
+\layout Section
+
+The Three State Problem
+\layout Standard
+
+The three state simulator is a common place three-state POMDP employed by
+ Baxter et al and is implemented in libPG.
+\layout Section
+
+Value Controllers
+\layout Standard
+
+The main idea of using SARSA and Q-Learning (as defined in sections 7.5 and
+ 7.6 of 
+\begin_inset LatexCommand \cite{rl}
+
+\end_inset 
+
+) to approach the three state problem is to understand which policy evaluation
+ approach (i.e.
+ on-policy or off-policy) performs better in this case.
+ Also, since action selection influences the results, we tried both softmax
+ and 
+\begin_inset Formula $\epsilon$
+\end_inset 
+
+-greedy policies.
+ Below, it is presented the algorithms and the corresponding resulting graphs.
+\layout Subsection
+\pagebreak_top 
+SARSA(
+\begin_inset Formula $\lambda$
+\end_inset 
+
+) with Softmax Decaying Temperature Policy
+\layout LyX-Code
+
+double discount  = 0.4;
+\layout LyX-Code
+
+double step_size = 0.001;
+\layout LyX-Code
+
+double kapa      = 1e-05;
+\layout LyX-Code
+
+\layout LyX-Code
+
+Controller* controller = new SARSAController(
+\layout LyX-Code
+
+                         new NeuralNet(nnDims, squash),
+\layout LyX-Code
+
+               (Policy*) new SoftmaxPolicy(new Temp(kapa)), 
+\layout LyX-Code
+
+                         TD_DISCOUNT);
+\layout LyX-Code
+
+\layout LyX-Code
+
+OLPomdp* learner = new OLPomdp(controller,
+\layout LyX-Code
+
+                   new ThreeState(), discount, step_size);
+\layout Standard
+
+
+\begin_inset Float figure
+placement H
+wide false
+collapsed true
+
+\layout Standard
+
+
+\hfill 
+
+\begin_inset Graphics
+	filename Figures/SARSA_Lambda_Softmax_Decaying_Temperature.ps
+	scale 30
+
+\end_inset 
+
+
+\hfill 
+
+\layout Caption
+
+SARSA(
+\begin_inset Formula $\lambda$
+\end_inset 
+
+) with softmax policy (decaying temperature)
+\end_inset 
+
+
+\layout Subsection
+\pagebreak_top 
+SARSA(
+\begin_inset Formula $\lambda$
+\end_inset 
+
+) with Constant 
+\begin_inset Formula $\epsilon$
+\end_inset 
+
+ 
+\begin_inset Formula $\epsilon$
+\end_inset 
+
+-Greedy Policy
+\layout LyX-Code
+
+double discount  = 0.5;
+\layout LyX-Code
+
+double step_size = 0.001;
+\layout LyX-Code
+
+double epsilon   = 0.01;
+\layout LyX-Code
+
+\layout LyX-Code
+
+Controller* controller = new SARSAController(
+\layout LyX-Code
+
+                         new NeuralNet(nnDims, squash) 
+\layout LyX-Code
+
+               (Policy*) new eGreedyPolicy(epsilon),
+\layout LyX-Code
+
+                         TD_DISCOUNT);
+\layout LyX-Code
+
+\layout LyX-Code
+
+OLPomdp* learner = new OLPomdp(controller,
+\layout LyX-Code
+
+                   new ThreeState(), discount, step_size);
+\layout Standard
+
+
+\begin_inset Float figure
+placement H
+wide false
+collapsed true
+
+\layout Standard
+
+
+\hfill 
+
+\begin_inset Graphics
+	filename Figures/SARSA_Lambda_e-Greedy_Constant_Epsilon.ps
+	scale 30
+
+\end_inset 
+
+
+\hfill 
+
+\layout Caption
+
+SARSA(
+\begin_inset Formula $\lambda$
+\end_inset 
+
+) with 
+\begin_inset Formula $\epsilon$
+\end_inset 
+
+-greedy policy (constant 
+\begin_inset Formula $\epsilon$
+\end_inset 
+
+)
+\end_inset 
+
+
+\layout Subsection
+\pagebreak_top 
+SARSA(
+\begin_inset Formula $\lambda$
+\end_inset 
+
+) with Decaying 
+\begin_inset Formula $\epsilon$
+\end_inset 
+
+ 
+\begin_inset Formula $\epsilon$
+\end_inset 
+
+-Greedy Policy
+\layout LyX-Code
+
+double discount  = 0.7;
+\layout LyX-Code
+
+double step_size = 0.001;
+\layout LyX-Code
+
+double kapa      = 0.001;
+\layout LyX-Code
+
+\layout LyX-Code
+
+Controller* controller = new SARSAController(
+\layout LyX-Code
+
+                         new NeuralNet(nnDims, squash),
+\layout LyX-Code
+
+               (Policy*) new eGreedyPolicy(
+\layout LyX-Code
+
+                         new EpsilonDecay(kapa)),
+\layout LyX-Code
+
+                         TD_DISCOUNT);
+\layout LyX-Code
+
+\layout LyX-Code
+
+OLPomdp* learner = new OLPomdp(controller,
+\layout LyX-Code
+
+                   new ThreeState(), discount, step_size);
+\layout Standard
+
+
+\begin_inset Float figure
+placement H
+wide false
+collapsed true
+
+\layout Standard
+
+
+\hfill 
+
+\begin_inset Graphics
+	filename Figures/SARSA_Lambda_e-Greedy_Decaying_Epsilon.ps
+	scale 30
+
+\end_inset 
+
+
+\hfill 
+
+\layout Caption
+
+SARSA(
+\begin_inset Formula $\lambda$
+\end_inset 
+
+) with 
+\begin_inset Formula $\epsilon$
+\end_inset 
+
+-greedy policy (decaying 
+\begin_inset Formula $\epsilon$
+\end_inset 
+
+)
+\end_inset 
+
+
+\layout Subsection
+\pagebreak_top 
+Q-Learning(
+\begin_inset Formula $\lambda$
+\end_inset 
+
+) with Decaying Temperature Softmax Policy
+\layout LyX-Code
+
+double discount  = 0.4;
+\layout LyX-Code
+
+double step_size = 0.001;
+\layout LyX-Code
+
+double kapa      = 1e-05;
+\layout LyX-Code
+
+\layout LyX-Code
+
+Controller* controller = new QLearningController(
+\layout LyX-Code
+
+                         new NeuralNet(nnDims, squash),
+\layout LyX-Code
+
+               (Policy*) new SoftmaxPolicy(
+\layout LyX-Code
+
+                         new Temp(kapa)),
+\layout LyX-Code
+
+                         TD_DISCOUNT);
+\layout LyX-Code
+
+\layout LyX-Code
+
+OLPomdp* learner = new OLPomdp(controller,
+\layout LyX-Code
+
+                   new ThreeState(), discount, step_size);
+\layout Standard
+
+
+\begin_inset Float figure
+placement H
+wide false
+collapsed true
+
+\layout Standard
+
+
+\hfill 
+
+\begin_inset Graphics
+	filename Figures/Q-Learning_Lambda_Softmax_Decaying_Temperature.ps
+	scale 30
+
+\end_inset 
+
+
+\hfill 
+
+\layout Caption
+
+Q-Learning(
+\begin_inset Formula $\lambda$
+\end_inset 
+
+) with softmax policy (decaying temperature)
+\end_inset 
+
+
+\layout Subsection
+\pagebreak_top 
+Q-Learning(
+\begin_inset Formula $\lambda$
+\end_inset 
+
+) with Constant 
+\begin_inset Formula $\epsilon$
+\end_inset 
+
+ 
+\begin_inset Formula $\epsilon$
+\end_inset 
+
+-Greedy Policy
+\layout LyX-Code
+
+double discount =  0.5;
+\layout LyX-Code
+
+double step_size = 0.001;
+\layout LyX-Code
+
+double epsilon =   0.01;
+\layout LyX-Code
+
+\layout LyX-Code
+
+Controller* controller = new QLearningController(
+\layout LyX-Code
+
+                         new NeuralNet(nnDims, squash),
+\layout LyX-Code
+
+               (Policy*) new eGreedyPolicy(epsilon),
+\layout LyX-Code
+
+                         TD_DISCOUNT);
+\layout LyX-Code
+
+\layout LyX-Code
+
+OLPomdp* learner = new OLPomdp(controller,
+\layout LyX-Code
+
+                   new ThreeState(), discount, step_size);
+\layout Standard
+
+
+\begin_inset Float figure
+placement H
+wide false
+collapsed true
+
+\layout Standard
+
+
+\hfill 
+
+\begin_inset Graphics
+	filename Figures/Q-Learning_Lambda_e-Greedy_Constant_Epsilon.ps
+	scale 30
+
+\end_inset 
+
+
+\hfill 
+
+\layout Caption
+
+Q-Learning(
+\begin_inset Formula $\lambda$
+\end_inset 
+
+) with 
+\begin_inset Formula $\epsilon$
+\end_inset 
+
+-greedy policy (constant 
+\begin_inset Formula $\epsilon$
+\end_inset 
+
+)
+\end_inset 
+
+
+\layout Subsection
+\pagebreak_top 
+Q-Learning(
+\begin_inset Formula $\lambda$
+\end_inset 
+
+) with Decaying 
+\begin_inset Formula $\epsilon$
+\end_inset 
+
+ 
+\begin_inset Formula $\epsilon$
+\end_inset 
+
+-Greedy Policy
+\layout LyX-Code
+
+double discount  = 0.4;
+\layout LyX-Code
+
+double step_size = 0.001;
+\layout LyX-Code
+
+double kapa      = 0.001;
+\layout LyX-Code
+
+\layout LyX-Code
+
+Controller* controller = new QLearningController(
+\layout LyX-Code
+
+                         new NeuralNet(nnDims, squash),
+\layout LyX-Code
+
+               (Policy*) new eGreedyPolicy(
+\layout LyX-Code
+
+                         new EpsilonDecay(kapa)),
+\layout LyX-Code
+
+                         TD_DISCOUNT);
+\layout LyX-Code
+
+\layout LyX-Code
+
+OLPomdp* learner = new OLPomdp(controller,
+\layout LyX-Code
+
+                   new ThreeState(), discount, step_size);
+\layout Standard
+
+
+\begin_inset Float figure
+placement H
+wide false
+collapsed true
+
+\layout Standard
+
+
+\hfill 
+
+\begin_inset Graphics
+	filename Figures/Q-Learning_Lambda_e-Greedy_Decaying_Epsilon.ps
+	scale 30
+
+\end_inset 
+
+
+\hfill 
+
+\layout Caption
+
+Q-Learning(
+\begin_inset Formula $\lambda$
+\end_inset 
+
+) with 
+\begin_inset Formula $\epsilon$
+\end_inset 
+
+-greedy policy (decaying 
+\begin_inset Formula $\epsilon$
+\end_inset 
+
+)
+\end_inset 
+
+
+\layout Subsection
+\pagebreak_top 
+Binary Controller
+\layout LyX-Code
+
+double discount  = 0.6;
+\layout LyX-Code
+
+double step_size = 0.001;
+\layout LyX-Code
+
+\layout LyX-Code
+
+Controller* controller = new BinaryController(
+\layout LyX-Code
+
+                         new NeuralNet(nnDims, squash));
+\layout LyX-Code
+
+\layout LyX-Code
+
+OLPomdp* learner = new OLPomdp(controller,
+\layout LyX-Code
+
+                   new ThreeState(), discount, step_size);
+\layout Standard
+
+
+\begin_inset Float figure
+placement H
+wide false
+collapsed true
+
+\layout Standard
+
+
+\hfill 
+
+\begin_inset Graphics
+	filename Figures/Binary_Controller.ps
+	scale 30
+
+\end_inset 
+
+
+\hfill 
+
+\layout Caption
+
+Binary controller
+\end_inset 
+
+
+\layout Section
+
+Policy Gradient Controllers
+\layout Standard
+
+Natural Actor-Critics method (as defined in 
+\begin_inset LatexCommand \cite{NAC}
+
+\end_inset 
+
+) was also used in comparison with value methods.
+\layout Subsection
+\pagebreak_top 
+NAC Transform
+\layout LyX-Code
+
+double discount =  0.4;
+\layout LyX-Code
+
+double step_size = 0.001;
+\layout LyX-Code
+
+\layout LyX-Code
+
+Controller* controller= new NACTransform(
+\layout LyX-Code
+
+                        new BinaryController(
+\layout LyX-Code
+
+                        new NeuralNetBatch(nnDims, squash)),
+\layout LyX-Code
+
+                        TD_DISCOUNT);
+\layout LyX-Code
+
+\layout LyX-Code
+
+OLPomdp* learner = new OLPomdp(controller,
+\layout LyX-Code
+
+                   new ThreeState(), discount, step_size);
+\layout Standard
+
+
+\begin_inset Float figure
+placement H
+wide false
+collapsed true
+
+\layout Standard
+
+
+\hfill 
+
+\begin_inset Graphics
+	filename Figures/NAC_Transform.ps
+	scale 30
+
+\end_inset 
+
+
+\hfill 
+
+\layout Caption
+
+NAC Transform
+\end_inset 
+
+
+\layout Section
+
+Conclusion
+\layout Standard
+
+Among value based algorithms, SARSA behaved slightly better than Q-Learning
+ when using the same policy.
+ But, in both algorithms, 
+\begin_inset Formula $\epsilon$
+\end_inset 
+
+-greedy with decaying 
+\begin_inset Formula $\epsilon$
+\end_inset 
+
+ performed better than softmax with decaying temperature.
+ The worst result was achieved with 
+\begin_inset Formula $\epsilon$
+\end_inset 
+
+-greedy with constant 
+\begin_inset Formula $\epsilon$
+\end_inset 
+
+, as expected.
+\layout Standard
+
+Natural Actor-Critics was the best of all methods by far, converging very
+ quickly to the optimum solution, being the most suited algorithm for the
+ three state problem.
+\layout Bibliography
+\bibitem [Sutton and Barto]{rl}
+
+Richard S.
+ Sutton and Andrew G.
+ Barto.
+ 
+\emph on 
+Reinforcement Learning: An Introduction
+\layout Bibliography
+\bibitem [Peters, Vijayakumar and Schaal]{NAC}
+
+Jan Peters, Sethu Vijayakumar, Stefan Schaal.
+ 
+\emph on 
+Natural Actor-Critic
+\the_end

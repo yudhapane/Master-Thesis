@@ -74,7 +74,7 @@ par.cBF.r                  = [par.q.min par.q.max; par.p.min par.p.max];    % St
 par.cBF.rn                 = [-1 1;-1 1];                                   % Projection x -> \bar{x}
 par.cBF.f                  = 2;                                             % Which type of Fourier approximation. Choose '0' (sine), '1' (cosine) or 2 (sine+cosine). Note: '2' will generate twice as much parameters
 par.cBF.T                  = 2;                                             % Period of Fourier Basis
-[par.cBF.pb, par.cBF.alpha] = fourgen(par.cBF);                              % Generate frequency matrix and learning rate vector
+[par.cBF.pb, par.cBF.alpha] = fourgen(par.cBF);                             % Generate frequency matrix and learning rate vector
 par.cBF.alpha = [par.cBF.alpha;par.cBF.alpha];
 
 % ACTOR ES basis function settings for FOURIER BASIS

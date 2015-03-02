@@ -16,28 +16,29 @@ for i = 1: params.Ntrial
         
         % apply u(k), measure x(k+1), receive r(k+1)
         [clock,x] = ode45(@(t,x) oneDofRobot(t, x, u(k), params), time, x0);
-        x = transpose(x);
-        X(:,k+1) = wrapTo2Pi(x(:,end));
-        r(k+1) = calcCost(x(:,end), u(k), params); % change this to tracking 
+        x = wrapTo2Pi(transpose(x));
+        X(:,k+1) = x(:,end);
+        r(k+1) = calcCost(X(:,k), u(k), params); % change this to tracking 
         
         % choose next action u(k+1)
-        urand(k+1) = 0.1*randn;
-        u(k+1) = actor(x(:,end), params) + urand(k+1);
+        urand(k+1) = 0.03*randn;
+        u(k+1) = actor(X(:,k+1), params) + urand(k+1);
+        u(k+1) = actSaturate(u(k+1), params);       % input saturation
         
-        % temporal difference signal
-        delta(k) = r(k+1) + critic(X(:,k+1), params) - critic(X(:,k), params);
+        % calculate temporal difference signal 
+        V(k) = critic(X(:,k), params);              % V(x(k))
+        V(k+1) = critic(X(:,k+1), params);          % V(x(k+1))
+        delta(k) = r(k+1) + params.gamma*V(k+1) - V(k);
         
-        V(k) = critic(X(:,k), params); clc
-        V(k+1) = critic(X(:,k+1), params);
         
         % Update actor and critic
         if k == 1
-            params.phi = params.phi + params.alpha*delta(k)*urand(k+1)*(u(k)-0)./(Phi(:,k)-zeros(size(params.phi)));
-            params.theta = params.theta + params.alpha*delta(k)*(V(k)-zeros(size(V(k))))./(Theta(:,k)-zeros(size(params.theta)));
+            params.phi = params.phi + params.alpha_a*delta(k)*urand(k+1)*(u(k)-0)./(Phi(:,k)-zeros(size(params.phi)));
+            params.theta = params.theta + params.alpha_c*delta(k)*(V(k)-zeros(size(V(k))))./(Theta(:,k)-zeros(size(params.theta)));
         else
-            params.phi = params.phi + params.alpha*delta(k)*urand(k)*(u(k)-u(k-1))./(Phi(:,k)-Phi(:,k-1));            
+            params.phi = params.phi + params.alpha_a*delta(k)*urand(k)*(u(k)-u(k-1))./(Phi(:,k)-Phi(:,k-1));            
 %             params.alpha*delta(k)*(V(k)-zeros(size(V(k))))./(Theta(:,k)-zeros(size(params.theta)))
-            params.theta = params.theta + params.alpha*delta(k)*(V(k)-V(k-1))./(Theta(:,k)-Theta(:,k-1));
+            params.theta = params.theta + params.alpha_c*delta(k)*(V(k)-V(k-1))./(Theta(:,k)-Theta(:,k-1));
         end
         Phi(:,k+1) = params.phi;
         Theta(:,k+1) = params.theta;

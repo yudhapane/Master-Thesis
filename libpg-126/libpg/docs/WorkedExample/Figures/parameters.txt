@@ -1,0 +1,20 @@
+SARSA_Softmax.png
+Kapa: 1e-04	Step size: 1e-04	discount: 0.0	td_discount: 0.6
+
+SARSA_Lambda_Softmax.png
+Kapa: 1e-05	Step size: 1e-03	discount: 0.4	td_discount: 0.6
+
+SARSA_Lambda_e-Greedy.png
+Epsilon: 0.01	Step size: 1e-03	discount: 0.5	td_discount: 0.6
+
+QLearning_Lambda_Softmax.png
+KAPA: 1e-05	Step size: 1e-03	discount: 0.4	td_discount: 0.6
+
+QLearning_Lambda_e-Greedy.png
+Epsilon: 0.01 	Step size: 1e-03	discount: 0.5	td_discount: 0.6
+
+SARSA_Lambda_decaying_e-Greedy.png
+KAPA: 0.001	Step size: 0.001	discount: 0.7   td_discount: 0.6
+
+QLearning_Lambda_decaying_e-Greedy.png
+KAPA: 0.001	Step_size: 0.001	discount: 0.4	td_discount: 0.6

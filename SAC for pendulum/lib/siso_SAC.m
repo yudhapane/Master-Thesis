@@ -47,7 +47,6 @@ for kk = 1:par.trials
 
     for k = 1:par.Ns        
         % Actor feature values
-        
         [phiA, ~]                    = four(x(:,k),par.aBF);
         
         % Compute random action
@@ -60,7 +59,6 @@ for kk = 1:par.trials
 
         u                       = xi'*phiA;           % EB-PBC control law
         [uc, ducdu]             = sat(u,par.u,Delta_u);
-
         
         
         Delta_u                 = uc - u;
@@ -72,13 +70,13 @@ for kk = 1:par.trials
         rP                      = feval(strcat(sys.name,'_reward'),x(:,k+1),uc,par);
         
         % Critic feature values for x, xP
-        [phiC, ~]          = feval(par.cBF.type,x(:,k),par.cBF);                
-        [phiPC, ~]               = feval(par.cBF.type,x(:,k+1),par.cBF); 
+        [phiC, ~]          		= feval(par.cBF.type,x(:,k),par.cBF);                
+        [phiPC, ~]              = feval(par.cBF.type,x(:,k+1),par.cBF); 
         
         % CRITIC UPDATE
         dk                      = rP + par.gamma*phiPC'*theta - phiC'*theta;        % Temporal difference
         e_c                     = par.gamma*par.lambda*e_c + phiC;                  % Eligibility trace
-        thetaP                  = theta + dk*par.cBF.alpha.*e_c;                    % Critic parameter update
+        thetaP                  = theta + dk*par.cBF.alpha.*phiC;                    % Critic parameter update
         
         % ACTOR UPDATES
         xiP                     = xi + dk*ducdu*Delta_u*par.aBF.alpha.*phiA;       % Update ES

@@ -1,0 +1,15 @@
+#!/bin/sh
+
+cat <<EOF
+Thanks for trying out LibPG.
+This script has been provided for peoply that just can't help typing
+$ ./configure
+$ ./make
+But just to let you know, all I'm going to do is 'cp Makefile.default Makefile'.
+
+This might work for you if you have the latest version of Boost 
+in a normal place. Otherwise, please edit the resulting Makefile 
+and consider reading README.txt.
+EOF
+
+cp -i Makefile.default Makefile

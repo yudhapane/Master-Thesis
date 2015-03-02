@@ -1,0 +1,9 @@
+.svn
+Makefile
+*.o
+*.d
+SP38
+TaoProject
+CRF
+experiments
+paper
