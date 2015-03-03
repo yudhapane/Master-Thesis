@@ -62,7 +62,7 @@ for kk = 1:par.trials
         
         
         Delta_u                 = uc - u;
-        u
+        
         % Apply action uc(k) and return next state x(k+1)
         x(:,k+1)                = simph(x(:,k),uc,par,sys);
         
@@ -75,7 +75,7 @@ for kk = 1:par.trials
         
         % CRITIC UPDATE
         dk                      = rP + par.gamma*phiPC'*theta - phiC'*theta;        % Temporal difference
-        e_c                     = par.gamma*par.lambda*e_c + phiC;                  % Eligibility trace
+        e_c                     = par.gamma*par.lambda*e_c + phiC                  % Eligibility trace
         thetaP                  = theta + dk*par.cBF.alpha.*phiC;                    % Critic parameter update
         
         % ACTOR UPDATES
@@ -88,8 +88,8 @@ for kk = 1:par.trials
         bk.rc(kk)               = bk.rc(kk) + rP;
         bk.dkc(kk)              = bk.dkc(kk) + dk;
         bk.x_all(kk,k,:)        = x(:,k);
-        bk.uc(kk,k,:)        = uc;
-        bk.u(kk,k,:)        = u;
+        bk.uc(kk,k,:)           = uc;
+        bk.u(kk,k,:)            = u;
         % Assign updated values to variables
         theta                   = thetaP;
         xi                      = xiP;

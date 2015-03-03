@@ -1,7 +1,3 @@
-%testActorCritic run an actor critic RL controller for a 1-DoF inverted pendulum
-%
-% Copyright 2015 Yudha Pane
-
 clear; clc; close all;
 loadParams;
 
@@ -12,7 +8,7 @@ Phi(:,k) = params.phi;
 Theta(:,k) = params.theta;
 
 for counter = 1: params.Ntrial
-    u(k) = 2*rand; urand(k) = 0;      % initialize input and exploration signal
+    u(k) = 0.01; urand(k) = 0;      % initialize input and exploration signal
     r(k) = 0;                       % initialize reward/cost
     z_c(:,k) = zeros(params.NrbfX*params.NrbfY,1);
     z_a(:,k) = zeros(params.NrbfX*params.NrbfY,1);
@@ -47,20 +43,17 @@ for counter = 1: params.Ntrial
         V(k+1)      = critic(X(:,k+1), params);                     % V(x(k+1))
         delta(k)    = r(k+1) + params.gamma*V(k+1) - V(k);
         
+        % eligibility traces
+%         e(k+1)      = params.lambda*params.gamma*
         
-        %% Formula from [1] section IV A
-%         if (k > 1)
-%             z_a(:,k) = params.lambda_a*z_a(:,k-1) + (1-params.lambda_a)*u(k)*rbf(X(:,end),params);
-%             z_c(:,k) = params.lambda_c*z_c(:,k-1) + (1-params.lambda_c)*rbf(X(:,end),params);
-%         end
-%         % Update actor and critic
-%         % using formula from [1]
-%         params.theta    = params.theta + params.alpha_c*delta(k).*z_c(:,k);         % critic
-%         params.phi      = params.phi + params.alpha_a*delta(k)*urand(k).*z_a(:,k);   % actor
-        
-        %% Formula I created on my own
-        params.theta    = params.theta + params.alpha_c*delta(k)*rbf(X(:,end), params);         % critic
-        params.phi      = params.phi + params.alpha_a*delta(k)*urand(k)*rbf(X(:,end),params);   % actor
+        % using formula from [1]
+        if (k > 1)
+            z_a(:,k) = params.lambda_a*z_a(:,k-1) + (1-params.lambda_a)*rbf(X(:,end),params);
+            z_c(:,k) = params.lambda_c*z_c(:,k-1) + (1-params.lambda_c)*rbf(X(:,end),params);
+        end
+        % Update actor and critic
+%         params.theta    = params.theta + params.alpha_c*delta(k)*rbf(X(:,end), params);         % critic
+%         params.phi      = params.phi + params.alpha_a*delta(k)*urand(k)*rbf(X(:,end),params);   % actor
         
         Phi(:,k+1)      = params.phi;
         Theta(:,k+1)    = params.theta;
@@ -70,10 +63,10 @@ for counter = 1: params.Ntrial
     
     % Plotting purpose
     subplot(2,1,1);
-    plotOut = plotrbf(params, 'critic',params.plotopt); title('critic');
+    plotrbf(params, 'critic',params.plotopt); title('critic');
     xlabel('theta'); ylabel('theta dot'); colorbar  
     subplot(2,1,2);
-    plotOut = plotrbf(params, 'actor',params.plotopt); title('actor'); xlabel('theta'); ylabel('theta dot'); colorbar 
+    plotrbf(params, 'actor',params.plotopt); title('actor'); xlabel('theta'); ylabel('theta dot'); colorbar 
     pause(0.2);
     
 end

@@ -1,4 +1,5 @@
 function animateRobot(t, x)
+% function animateRobot(t, x, figHandle)
     par.l = 4.2e-2;      % link's length [m]
     if (t == 0)
        N = size(x,2);
@@ -25,7 +26,7 @@ function animateRobot(t, x)
         set(floor,'Xdata',floor_pos(1,:),'Ydata',floor_pos(2,:));
         axis equal
         drawnow
-        pause(0.1);
+%         pause(0.1);
     end
     
 function shape = linkshape(l)

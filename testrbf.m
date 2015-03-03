@@ -12,7 +12,7 @@ c = [0; 0];
 c = repmat(c,[1,N*N]);
 B = [100 0; 0 50];
 % X1 = repmat(x(1,:), [N, 1]);
-X2 = repmat(transpose(x(2,:)), [1, N]);
+% X2 = repmat(transpose(x(2,:)), [1, N]);
 
 tic
 temp = (X-c)'*inv(B);
