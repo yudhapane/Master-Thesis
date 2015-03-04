@@ -24,4 +24,6 @@ if ~isvector(x)
     temp = (x-c)'/B;
     temp2 = temp.*transpose(x-c);
     y = exp(-0.5*sum(temp2,2));
+%     sumY = sum(y);
+%     y = y/sumY;
     

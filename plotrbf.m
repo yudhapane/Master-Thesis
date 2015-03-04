@@ -18,7 +18,7 @@ function y = plotrbf(params, opt, opt2)
 
     % generate coordinates for evaluation
     x1 = linspace(-pi, pi, N);   
-    x2 = linspace(-10, 10, N);
+    x2 = linspace(-20, 20, N);
 
     X1 = repmat(x1, [N,1]);
     X1v = reshape(X1, [1, N*N]);
@@ -33,7 +33,7 @@ function y = plotrbf(params, opt, opt2)
         for k = 1: size(c,2)
             center = repmat(c(:,k),[1,N*N]);    
 
-            temp = (X-center)'*inv(B);
+            temp = (X-center)'/B;
             temp2 = temp.*transpose(X-center);
             Phi = exp(-0.5*sum(temp2,2));
 
@@ -50,7 +50,7 @@ function y = plotrbf(params, opt, opt2)
         for k = 1: size(c,2)
             center = repmat(c(:,k),[1,N*N]);
 
-            temp = (X-center)'*inv(B);
+            temp = (X-center)'/B;
             temp2 = temp.*transpose(X-center);
             Phi = exp(-0.5*sum(temp2,2));
 

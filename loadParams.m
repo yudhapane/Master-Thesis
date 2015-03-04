@@ -15,11 +15,11 @@ params.ref      = [0; 0];                               % desired position (stat
 qc          = linspace(-pi, pi, params.NrbfX);   
 qc          = repmat(qc, [params.NrbfY,1]);
 qc          = reshape(qc, [1, params.NrbfX*params.NrbfY]);
-qdotc       = linspace(-10, 10, params.NrbfY);
+qdotc       = linspace(-20, 20, params.NrbfY);
 qdotc       = repmat(qdotc, [1, params.NrbfX]);
 params.c    = [qc; qdotc];                          % center coordinate of all rbfs
 
-params.t_end    = 3;                                % final time    [s]
+params.t_end    = 4;                                % final time    [s]
 params.ts       = 1/125;                            % sampling time [s]
 
 % RL parameters
@@ -27,7 +27,7 @@ params.B        = [0.06 0; 0 0.6];          % the rbf's variance
 params.R        = 1;                        % the input cost function penalty
 params.Q        = [5 0; 0 .1];              % the error cost function penalty
 params.alpha_a  = 0.005;                    % actor learning rate
-params.alpha_c  = 0.01;                     % critic learning rate
+params.alpha_c  = 0.1;                     % critic learning rate
 params.gamma    = 0.9;                      % discount term
 params.lambda   = 0.65;                     %  
 params.lambda_a   = 0.55;                   % eligibility trace for actor
