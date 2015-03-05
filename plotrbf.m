@@ -36,9 +36,7 @@ function y = plotrbf(params, opt, opt2)
             temp = (X-center)'/B;
             temp2 = temp.*transpose(X-center);
             Phi = exp(-0.5*sum(temp2,2));
-            Phi = Phi/sum(Phi);
-            Phi = Phi*phi(k);
-
+            Phi = Phi/sum(Phi)*phi(k);
             PhiSum = PhiSum + Phi;                 
         end
         
@@ -57,9 +55,7 @@ function y = plotrbf(params, opt, opt2)
             temp = (X-center)'/B;
             temp2 = temp.*transpose(X-center);
             Phi = exp(-0.5*sum(temp2,2));
-            Phi = Phi/sum(Phi);
-            Phi = Phi*theta(k);
-
+            Phi = Phi/sum(Phi)*theta(k);
             PhiSum = PhiSum + Phi;              
         end
         PhiSum = reshape(PhiSum,[N,N]);

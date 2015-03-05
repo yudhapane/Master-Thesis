@@ -3,9 +3,9 @@
 %
 % Copyright 2015 Yudha Pane
 
-params.Ntrial   = 1000;                                  % no of trials
+params.Ntrial   = 1200;                                  % no of trials
 params.NrbfX    = 20;                                   % no of rbfs in q dimension
-params.NrbfY    = 20;                                   % no of rbfs in qdot dimension
+params.NrbfY    = 10;                                   % no of rbfs in qdot dimension
 
 params.phi      = ones(params.NrbfX*params.NrbfY,1);    % actor parameters
 params.theta    = ones(params.NrbfX*params.NrbfY,1);	% critic parameters
@@ -27,9 +27,9 @@ params.ts       = 0.03;                             % sampling time [s]
 params.B        = [0.015 0; 0 3.5];         % the rbf's variance
 params.R        = 1;                        % the input cost function penalty
 params.Q        = [5 0; 0 0.1];             % the error cost function penalty
-params.alpha_a  = 0.08;                     % actor learning rate
-params.alpha_c  = 0.3;                      % critic learning rate
-params.gamma    = 0.90;                     % discount term
+params.alpha_a  = 0.05;                     % actor learning rate
+params.alpha_c  = 0.4;                      % critic learning rate
+params.gamma    = 0.97;                     % discount term
 params.lambda   = 0.65;                     %  
 params.lambda_a   = 0.55;                   % eligibility trace for actor
 params.lambda_c   = 0.85;                   % eligibility trace for critic
@@ -54,5 +54,5 @@ params.skew     = 0.500;
 % Various paramaters
 % params.plotopt = '3d';      % the plot option, uncomment for use
 params.plotopt  = '2d';      % plot as 2d 
-params.varRand  = 1;
-params.expSteps = 3;
+params.varRand  = 5;
+params.expSteps = 1;
