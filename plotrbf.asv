@@ -30,21 +30,17 @@ function y = plotrbf(params, opt, opt2)
     Yd      = repmat(transpose(x2), [1,N]);
     PhiSum  = zeros(N*N,1);
     if strcmp(opt, 'actor')
-        for k = 1: size(c,2)        % for each rbf
+        for k = 1: size(c,2)
             center = repmat(c(:,k),[1,N*N]);    
 
             temp = (X-center)'/B;
             temp2 = temp.*transpose(X-center);
             Phi = exp(-0.5*sum(temp2,2));
-            Phi = Phi/sum(Phi);
-            Phi = Phi*phi(k);
 
+            Phi = reshape(Phi,[N,N])*phi(k);
             PhiSum = PhiSum + Phi;                 
         end
-        
-        PhiSum = reshape(PhiSum,[N,N]);        
         PhiSum = actSaturate(PhiSum, params);
-        
         if (strcmp(opt2, '3d'))
             surf(Xd,Yd,PhiSum);  shading interp;  
         else
@@ -57,12 +53,9 @@ function y = plotrbf(params, opt, opt2)
             temp = (X-center)'/B;
             temp2 = temp.*transpose(X-center);
             Phi = exp(-0.5*sum(temp2,2));
-            Phi = Phi/sum(Phi);
-            Phi = Phi*theta(k);
 
             PhiSum = PhiSum + Phi;              
         end
-        PhiSum = reshape(PhiSum,[N,N]);
         
         if (strcmp(opt2, '3d'))
             surf(Xd,Yd,PhiSum);  shading interp;   

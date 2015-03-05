@@ -1,4 +1,4 @@
-function [theta, xi, bk] = siso_SAC(sys,par,theta,xi)
+function [theta, xi, bk, DK] = siso_SAC(sys,par,theta,xi)
 %SISO_EBAC Run the Energy-Balancing Actor-Critic algorithm for a SISO
 %system
 %
@@ -36,7 +36,8 @@ function [theta, xi, bk] = siso_SAC(sys,par,theta,xi)
 
 % Bookkeeping
 bk              = bookkeeping(par.xdes,par,sys);
-
+DK(1) = 0;
+count = 1;
 % Energy-Balancing & Damping Injection Actor-Critic RL
 for kk = 1:par.trials
     % Initial condition
@@ -93,6 +94,8 @@ for kk = 1:par.trials
         % Assign updated values to variables
         theta                   = thetaP;
         xi                      = xiP;
+        DK(count) = dk;
+        count = count+1;
     end
     
    % Online plot 

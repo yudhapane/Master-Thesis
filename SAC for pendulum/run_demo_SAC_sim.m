@@ -41,7 +41,8 @@ sys                             = invpend_sys(simu);
 % Get simulation parameters
 [par, theta, xi]           = invpend_SAC_par_demo(sys);
 % Run SISO-EBAC
-[theta, xi, bk]  = siso_SAC(sys,par,theta,xi);
+[theta, xi, bk, DK]  = siso_SAC(sys,par,theta,xi);
+figure; plot(DK);
 % clc
 % pause(2)
 % close(gcf)

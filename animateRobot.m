@@ -26,7 +26,7 @@ function animateRobot(t, x)
         set(floor,'Xdata',floor_pos(1,:),'Ydata',floor_pos(2,:));
         axis equal
         drawnow
-%         pause(0.1);
+        pause(0.1);
     end
     
 function shape = linkshape(l)

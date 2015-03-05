@@ -30,7 +30,7 @@ function animateRobotRL(t, x)
         axis equal
         
         drawnow
-%         pause(0.1);
+%         pause(0.01);
     end
     
 function shape = linkshape(l)
