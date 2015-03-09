@@ -5,4 +5,5 @@ function V = critic(state, params)
 %       parameters defined in params.theta
 % 
 % Copyright 2015 Yudha Pane
+
     V = params.theta'*rbf(state, params);          % calculate value

@@ -3,8 +3,9 @@
 % Copyright 2015 Yudha Pane
 
 clear; clc; close all;
-loadParams;
-% load params_trial19.mat
+loadParams6Mar;
+load params_trial16.mat;
+params.plotopt = '2d';
 
 xinit       = [pi ;0];                  % initial state
 x0          = [pi; 0];
@@ -27,34 +28,30 @@ for counter = 1:params.Ntrial
     e_c = 0;
     
     %% Timing & tuning parameters 
-%     if (counter == 1000)
-%         params.varRand = 0.7;
-%         disp('exploration variance reduced to 0.4');
-%     end
-%     if (counter == 300)
-%         params.varRand = 0.4;
-%         disp('exploration variance reduced to 0.2');
-%     end
-    if(counter == 250)
-        params.expSteps = 10;
+    if (counter == 1000)
+        params.varRand = 0.7;
+        disp('exploration variance reduced to 0.4');
+    end
+    if (counter == 1000)
+        params.varRand = 0.4;
+        disp('exploration variance reduced to 0.2');
+    end
+    if(counter == 1000)
+        params.expSteps = 6;
         disp('exploration frequency reduced to 1/6');
     end  
-    if(counter == 500)
-        params.varRand = 0.5;
-        disp('exploration frequency reduced to 1/6');
-    end      
         
 %     E(k) = e0;      % eligibility trace
     for t = 0: params.ts: params.t_end
         time = [t t+params.ts];
         
         %% Calculate control input
-        if k==1                                 % generate a randomized initial input
+        if k==1                 % generate a randomized initial input
             u(k)        = 5*randn;
             uc(k)       = u(k);   
             Delta_u     = 1;
         else
-            if mod(k,params.expSteps) == 0      % explore only once every defined time steps
+            if mod(k,params.expSteps) == 0    % explore only once every 12 time steps
                 urand(k)  = params.varRand*randn;                                      
             else
                 urand(k)  = 0;
@@ -66,7 +63,7 @@ for counter = 1:params.Ntrial
         end  
  
         if (counter> oldCounter)
-            uc(k) = params.varInitInput*randn;
+            uc(k) = 0;
             oldCounter = counter;
         end
         
@@ -141,7 +138,7 @@ figure;
 % animation purpose
 Q       = X(1,:);
 spacing = 1;
-animateRobotRL(0, Q(end-4000:spacing:end));     
+animateRobotRL(0, Q(1:spacing:end));     
 figure; 
 
 

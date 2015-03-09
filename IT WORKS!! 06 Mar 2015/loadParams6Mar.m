@@ -3,14 +3,14 @@
 %
 % Copyright 2015 Yudha Pane
 
-params.Ntrial   = 1200;                                  % no of trials
-params.NrbfX    = 20;                                   % no of rbfs in q dimension
-params.NrbfY    = 10;                                   % no of rbfs in qdot dimension
+params.Ntrial   = 1000;                                 % no of trials
+params.NrbfX    = 30;                                   % no of rbfs in q dimension
+params.NrbfY    = 30;                                   % no of rbfs in qdot dimension
 
-params.phi      = ones(params.NrbfX*params.NrbfY,1);    % actor parameters
-params.theta    = ones(params.NrbfX*params.NrbfY,1);	% critic parameters
+params.phi      = -ones(params.NrbfX*params.NrbfY,1);    % actor parameters
+params.theta    = -ones(params.NrbfX*params.NrbfY,1);	% critic parameters
 params.ref      = [0; 0];                               % desired position (state) 
-params.qdotLim  = 20;
+params.qdotLim  = 25;
 
 % generate center of rbf (2xN matrix)
 qc          = linspace(-pi, pi, params.NrbfX);   
@@ -20,13 +20,13 @@ qdotc       = linspace(-params.qdotLim, params.qdotLim, params.NrbfY);
 qdotc       = repmat(qdotc, [1, params.NrbfX]);
 params.c    = [qc; qdotc];                          % center coordinate of all rbfs
 
-params.t_end    = 3;                                % final time    [s]
+params.t_end    = 3.5;                                % final time    [s]
 params.ts       = 0.03;                             % sampling time [s]
 
 % RL parameters
-params.B        = [0.015 0; 0 3.5];         % the rbf's variance
+params.B        = [0.015 0; 0 1.5];         % the rbf's variance
 params.R        = 1;                        % the input cost function penalty
-params.Q        = [5 0; 0 0.1];             % the error cost function penalty
+params.Q        = [9 0; 0 0.1];             % the error cost function penalty
 params.alpha_a  = 0.05;                     % actor learning rate
 params.alpha_c  = 0.4;                      % critic learning rate
 params.gamma    = 0.97;                     % discount term
@@ -46,13 +46,13 @@ params.R    = 9.5;          % rotor resistance (ohm)
 
 % Saturation parameters
 params.uSat     = 3;            % voltage saturation value
-params.max      = 3;
-params.min      = -3;
+params.max      = params.uSat;
+params.min      = -params.uSat;
 params.sattype  = 'plain';
 params.skew     = 0.500;
 
 % Various paramaters
 % params.plotopt = '3d';      % the plot option, uncomment for use
 params.plotopt  = '2d';      % plot as 2d 
-params.varRand  = 5;
-params.expSteps = 1;
+params.varRand  = 1;
+params.expSteps = 50;

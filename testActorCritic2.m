@@ -4,7 +4,7 @@
 
 clear; clc; close all;
 loadParams;
-% load params_trial8.mat
+% load params_trial19.mat
 
 xinit       = [pi ;0];                  % initial state
 x0          = [pi; 0];
@@ -27,31 +27,34 @@ for counter = 1:params.Ntrial
     e_c = 0;
     
     %% Timing & tuning parameters 
-    if (counter == 400)
-        params.varRand = 0.4;
-        disp('exploration variance reduced to 0.4');
-    end
-    if (counter == 600)
-        params.varRand = 0.2;
-        disp('exploration variance reduced to 0.2');
-    end
-    if(counter == 400)
+%     if (counter == 1000)
+%         params.varRand = 0.7;
+%         disp('exploration variance reduced to 0.4');
+%     end
+%     if (counter == 300)
+%         params.varRand = 0.4;
+%         disp('exploration variance reduced to 0.2');
+%     end
+    if(counter == 250)
         params.expSteps = 10;
-        disp('exploration frequency reduced to 1/10');
+        disp('exploration frequency reduced to 1/6');
     end  
+    if(counter == 500)
+        params.varRand = 0.5;
+        disp('exploration frequency reduced to 1/6');
+    end      
         
 %     E(k) = e0;      % eligibility trace
-%     counter             % check counter   
     for t = 0: params.ts: params.t_end
         time = [t t+params.ts];
         
         %% Calculate control input
-        if k==1                 % generate a randomized initial input
+        if k==1                                 % generate a randomized initial input
             u(k)        = 5*randn;
             uc(k)       = u(k);   
             Delta_u     = 1;
         else
-            if mod(k,params.expSteps) == 0    % explore only once every 12 time steps
+            if mod(k,params.expSteps) == 0      % explore only once every defined time steps
                 urand(k)  = params.varRand*randn;                                      
             else
                 urand(k)  = 0;
@@ -63,7 +66,7 @@ for counter = 1:params.Ntrial
         end  
  
         if (counter> oldCounter)
-            uc(k) = 0;
+            uc(k) = params.varInitInput*randn;
             oldCounter = counter;
         end
         
@@ -115,13 +118,15 @@ for counter = 1:params.Ntrial
     % Plotting purpose
     if mod(counter,3) == 0
         clf;
-        subplot(3,1,1); 
+        subplot(2,2,1); 
         plotOut = plotrbf(params, 'critic',params.plotopt); title(['\bf{CRITIC}  Iteration: ' int2str(counter)]);
         xlabel('$\theta  \hspace{1mm}$ [rad]','Interpreter','Latex'); ylabel('$\dot{\theta}$ \hspace{1mm} [rad/s]','Interpreter','Latex'); colorbar 
-        subplot(3,1,2); 
+        subplot(2,2,3); 
         plotOut = plotrbf(params, 'actor',params.plotopt); title('\bf{ACTOR}'); xlabel('$\theta \hspace{1mm}$ [rad]','Interpreter','Latex'); ylabel('$\dot{\theta} \hspace{1mm}$ [rad/s]','Interpreter','Latex'); colorbar 
-        subplot(3,1,3);
-        plot(delta); title('Temporal difference');
+        subplot(2,2,2);
+        plot(delta); title('\bf{Temporal difference}');
+        subplot(2,2,4);
+        plot(sum(Ret,2)); title('\bf{Average return}');
         pause(0.2);    
     end
 end
@@ -129,14 +134,14 @@ end
 figure;
 % subplot(2,1,1); plot(Ret(1,:)); hold on; plot(Ret(end,:),'r');
 % subplot(2,1,2); 
-plot(sum(Ret,2)); title('Average return');
+% plot(sum(Ret,2)); title('Average return');
 % figure; 
 % plot(delta); title('Temporal difference');
 
 % animation purpose
 Q       = X(1,:);
-spacing = 10;
-animateRobotRL(0, Q(1:spacing:end));     
+spacing = 1;
+animateRobotRL(0, Q(end-1000:spacing:end));     
 figure; 
 
 

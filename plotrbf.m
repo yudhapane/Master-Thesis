@@ -26,44 +26,43 @@ function y = plotrbf(params, opt, opt2)
     X   = [X1v; X2v];
     
     % for plotting purpose
-    Xd      = X1;
-    Yd      = repmat(transpose(x2), [1,N]);
-    PhiSum  = zeros(N*N,1);
+    Phi         = zeros(N^2,size(c,2));
     if strcmp(opt, 'actor')
         for k = 1: size(c,2)        % for each rbf
             center = repmat(c(:,k),[1,N*N]);    
 
             temp = (X-center)'/B;
             temp2 = temp.*transpose(X-center);
-            Phi = exp(-0.5*sum(temp2,2));
-            Phi = Phi/sum(Phi)*phi(k);
-            PhiSum = PhiSum + Phi;                 
+            Phi(:,k) = exp(-0.5*sum(temp2,2));                             
         end
-        
-        PhiSum = reshape(PhiSum,[N,N]);        
-        PhiSum = actSaturate(PhiSum, params);
+        PhiSum = sum(Phi,2);
+        Phi    = Phi*phi;
+        sum(Phi == PhiSum)
+        Phi    = Phi./PhiSum;
+        Phi = actSaturate(Phi, params);
+        Phi = reshape(Phi, N, N);
         
         if (strcmp(opt2, '3d'))
-            surf(Xd,Yd,PhiSum);  shading interp;  
+            surf(x1,x2,Phi);  shading interp;  
         else
-            imagesc(x1, x2, PhiSum);
+            imagesc(x1, x2, Phi);
         end
     elseif strcmp(opt, 'critic')
-        for k = 1: size(c,2)
-            center = repmat(c(:,k),[1,N*N]);
-
+        for k = 1: size(c,2)        % for each rbf
+            center = repmat(c(:,k),[1,N*N]);    
             temp = (X-center)'/B;
             temp2 = temp.*transpose(X-center);
-            Phi = exp(-0.5*sum(temp2,2));
-            Phi = Phi/sum(Phi)*theta(k);
-            PhiSum = PhiSum + Phi;              
+            Phi(:,k) = exp(-0.5*sum(temp2,2));                             
         end
-        PhiSum = reshape(PhiSum,[N,N]);
+        PhiSum  = sum(Phi,2);
+        Phi     = Phi*theta;
+        Phi     = Phi./PhiSum;
+        Phi     = reshape(Phi, N, N);
         
         if (strcmp(opt2, '3d'))
-            surf(Xd,Yd,PhiSum);  shading interp;   
+            surf(x1,x2,Phi);    shading interp;   
         else
-            imagesc(x1, x2, PhiSum);
+            imagesc(x1, x2, Phi);
         end
     else
         error('not a valid option');
