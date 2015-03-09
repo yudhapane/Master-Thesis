@@ -34,12 +34,16 @@ for counter = 1:params.Ntrial
     %% Adjust exploration 
     if(counter == params.expStepsRedIter)
         params.expSteps = 10;
-        disp(['exploration frequency reduced to ' num2str(params.expSteps)]);
+        disp(['exploration frequency reduced to ' num2str(1/params.expSteps)]);
     end  
     if(counter == params.expVarRedIter)
         params.varRand = 0.5;
         disp(['exploration variance reduced to ' num2str(params.varRand)]);
     end      
+    if(counter == params.expStops)
+        params.varRand = 0;
+        disp('exploration is stopped from here on');
+    end          
         
 %     E(k) = e0;      % eligibility trace
     for t = 0: params.ts: params.t_end
@@ -64,7 +68,9 @@ for counter = 1:params.Ntrial
         end  
         
         if (counter> oldCounter)
-            uc(k)       = params.varInitInput*randn;
+            if (counter < params.expStops)
+                uc(k)       = params.varInitInput*randn;
+            end                
             oldCounter  = counter;
             iterIndex(k)= 1;                               % new trial detected, set to 1
         end
@@ -115,7 +121,7 @@ for counter = 1:params.Ntrial
     end
     
     % Plotting purpose
-    if mod(counter,3) == 0
+    if mod(counter,params.plotSteps) == 0
         clf;
         subplot(2,2,1); 
         plotOut = plotrbf(params, 'critic',params.plotopt); title(['\bf{CRITIC}  Iteration: ' int2str(counter)]);
@@ -131,18 +137,13 @@ for counter = 1:params.Ntrial
 end
 
 figure;
-% subplot(2,1,1); plot(Ret(1,:)); hold on; plot(Ret(end,:),'r');
-% subplot(2,1,2); 
-% plot(sum(Ret,2)); title('Average return');
-% figure; 
-% plot(delta); title('Temporal difference');
 
 % animation purpose
 Q       = X(1,:);
 spacing = 1;
-indexSelector = [1 400:30:580 600];
+indexSelector = [1:50:500 500:10:600];
 animateRobotRL(Clock(1:spacing:end), Q(1:spacing:end), iterIndex, indexSelector, params);     
-figure; 
+
 
 
 %% References:

@@ -14,15 +14,15 @@ function animateRobotRL(t, x, iterIndex, indexSelector, params)
     link = patch('Parent', axesHandle, 'FaceColor', colors);
     floor = line('Parent',axesHandle, 'Color',[0 0 0], 'LineWidth',0.1);
     shape = linkshape(-par.l);
-    textHandle = text(-0.005, 0.044, 'Iteration: ');
-    textHandle2 = text(-0.005, 0.041, 'Clock: ');
+    textHandle = text(-0.05, 0.043, '\bf{Iteration:} ');
+    textHandle2 = text(0.04, 0.043, '\bf{Clock:} ');
     
     % animation
     for idx = indexSelector
-        set(textHandle, 'String', ['Iteration: ' num2str(idx)]);     
+        set(textHandle, 'String', ['\bf{Iteration:} ' num2str(idx)]);     
         if idx+1<=length(trialsIdx)
             for i = trialsIdx(idx): trialsIdx(idx+1)-1
-                set(textHandle2, 'String', ['Clock: ' num2str(t(i))]);            
+                set(textHandle2, 'String', ['\bf{Clock:} ' num2str(t(i))]);            
                 % get state
                 q = x(i);
                 q = -q;
@@ -38,7 +38,7 @@ function animateRobotRL(t, x, iterIndex, indexSelector, params)
                 pause(0.03);
             end
         else
-            for i = trialsIdx(idx): trialsIdx(i
+            for i = trialsIdx(idx): N
                 set(textHandle2, 'String', ['Clock: ' num2str(t(i))]);            
                 % get state
                 q = x(i);
@@ -54,6 +54,8 @@ function animateRobotRL(t, x, iterIndex, indexSelector, params)
                 drawnow
                 pause(0.03);
             end
+        end
+        pause(0.25);
     end
     
 function shape = linkshape(l)
