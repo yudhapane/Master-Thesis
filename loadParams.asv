@@ -3,7 +3,7 @@
 %
 % Copyright 2015 Yudha Pane
 
-params.Ntrial   = 600;                                 % no of trials
+params.Ntrial   = 400;                                 % no of trials
 params.NrbfX    = 40;                                   % no of rbfs in q dimension
 params.NrbfY    = 40;                                   % no of rbfs in qdot dimension
 
@@ -57,5 +57,5 @@ params.plotopt  = '2d';         % plot as 2d
 params.varRand  = 2;            % exploration variance
 params.expSteps = 2;            % exploration steps
 params.varInitInput = 1;        % initial input for each new trial
-params.expStepsRedIter = 200;   % the exploration steps is reduced at this iteration    
-params.expVarRedIter = 400;     % the exploration variance is reduced at this iteration
+params.expStepsRedTrial = 200;  % the    
+params.expVarRedIter = 400;     % tr    

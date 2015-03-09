@@ -4,18 +4,23 @@
 
 clear; clc; close all;
 loadParams;
-% load params_trial19.mat
 
 xinit       = [pi ;0];                  % initial state
 x0          = [pi; 0];
 e0          = 1;                        % initial eligibility trace
+
 k           = 1;                        % initialize index variable
+X(:,k)      = zeros(2,1);               % state memory
+Clock(k)    = 0.0;                      % clock memory
 Phi(:,k)    = params.phi;               % actor parameters memory
 Theta(:,k)  = params.theta;             % critic parameters memory
 Ret(:,k)    = zeros(params.Ntrial,1);   % return memory
 V(k)        = 0;                        % initialize value function
-uSel(k)     = 1;
+uSel(k)     = 1;                        % actor parameter update selector, 1 for update & 0 for not update
+iterIndex(k)= 1;                        % iteration indexing. Useful for animation purpose   
 oldCounter  = 1;
+
+
 
 for counter = 1:params.Ntrial
     X(:,k) = xinit;     
@@ -26,22 +31,14 @@ for counter = 1:params.Ntrial
     x0 = xinit;         % reset state to initial position
     e_c = 0;
     
-    %% Timing & tuning parameters 
-%     if (counter == 1000)
-%         params.varRand = 0.7;
-%         disp('exploration variance reduced to 0.4');
-%     end
-%     if (counter == 300)
-%         params.varRand = 0.4;
-%         disp('exploration variance reduced to 0.2');
-%     end
-    if(counter == 250)
+    %% Adjust exploration 
+    if(counter == params.expStepsRedIter)
         params.expSteps = 10;
-        disp('exploration frequency reduced to 1/6');
+        disp(['exploration frequency reduced to ' num2str(params.expSteps)]);
     end  
-    if(counter == 500)
+    if(counter == params.expVarRedIter)
         params.varRand = 0.5;
-        disp('exploration frequency reduced to 1/6');
+        disp(['exploration variance reduced to ' num2str(params.varRand)]);
     end      
         
 %     E(k) = e0;      % eligibility trace
@@ -53,7 +50,7 @@ for counter = 1:params.Ntrial
             u(k)        = 5*randn;
             uc(k)       = u(k);   
             Delta_u     = 1;
-        else
+        else            
             if mod(k,params.expSteps) == 0      % explore only once every defined time steps
                 urand(k)  = params.varRand*randn;                                      
             else
@@ -63,11 +60,13 @@ for counter = 1:params.Ntrial
             u(k)            = actor(X(:,k), params);        % subbu's
             [uc(k), uSel(k)]= sat(u(k), params, Delta_u);   % subbu's
             Delta_u         = uc(k) - u(k);                 % subbu's
+            iterIndex(k) = 0;                               % always set to zero unless new trial is reached            
         end  
- 
+        
         if (counter> oldCounter)
-            uc(k) = params.varInitInput*randn;
-            oldCounter = counter;
+            uc(k)       = params.varInitInput*randn;
+            oldCounter  = counter;
+            iterIndex(k)= 1;                               % new trial detected, set to 1
         end
         
         %% Apply the control input & receive reward
@@ -77,6 +76,7 @@ for counter = 1:params.Ntrial
         x(1,:)      = deg2rad(x(1,:));
         X(:,k+1)    = x(:,end);                             % get the state measurement
         r(k+1)      = calcCost(X(:,k), uc(k), params);      % calculate the cost / reward  % subbu's note the uc
+        Clock(k+1)  = clock(end);                           % get clock
         
         %% Compute temporal difference & eligibility trace
         V(k)        = critic(X(:,k), params);                       % V(x(k))
@@ -88,7 +88,7 @@ for counter = 1:params.Ntrial
         % Formula I programmed on my own
         % Update actor and critic
         params.theta    = params.theta + params.alpha_c*delta(k)*rbf(X(:,k), params);             % critic
-%         params.theta    = params.theta + params.alpha_c*delta(k)*e_c.*rbf(X(:,k), params);             % critic
+%         params.theta    = params.theta + params.alpha_c*delta(k)*e_c.*rbf(X(:,k), params);         % critic with eligibility trace
         params.phi      = params.phi + params.alpha_a*delta(k)*Delta_u*uSel(k)*rbf(X(:,k),params);  % actor
         
         % save the parameters to memory
@@ -109,7 +109,6 @@ for counter = 1:params.Ntrial
         Ret(counter,k+1)    = params.gamma*Ret(counter,k) + r(k+1);  % update return value
 
         %% Update time step and initial state
-%         x0  = x(:,end); 
         x0  = X(:,k+1); 
         k   = k+1;          % update index variable
         
@@ -126,7 +125,7 @@ for counter = 1:params.Ntrial
         subplot(2,2,2);
         plot(delta); title('\bf{Temporal difference}');
         subplot(2,2,4);
-        plot(sum(Ret,2)); title('\bf{Average return}');
+        plot(sum(Ret,2)); title('\bf{Return}');
         pause(0.2);    
     end
 end
@@ -141,7 +140,8 @@ figure;
 % animation purpose
 Q       = X(1,:);
 spacing = 1;
-animateRobotRL(0, Q(end-4000:spacing:end));     
+indexSelector = [1 2 6];
+animateRobotRL(Clock(1:spacing:end), Q(1:spacing:end), iterIndex, indexSelector, params);     
 figure; 
 
 

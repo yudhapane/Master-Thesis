@@ -37,7 +37,6 @@ function y = plotrbf(params, opt, opt2)
         end
         PhiSum = sum(Phi,2);
         Phi    = Phi*phi;
-        sum(Phi == PhiSum)
         Phi    = Phi./PhiSum;
         Phi = actSaturate(Phi, params);
         Phi = reshape(Phi, N, N);

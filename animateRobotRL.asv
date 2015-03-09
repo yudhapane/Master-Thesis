@@ -38,7 +38,7 @@ function animateRobotRL(t, x, iterIndex, indexSelector, params)
                 pause(0.03);
             end
         else
-            for i = trialsIdx(idx): N
+            for i = trialsIdx(idx): trialsIdx(i
                 set(textHandle2, 'String', ['Clock: ' num2str(t(i))]);            
                 % get state
                 q = x(i);
@@ -54,7 +54,6 @@ function animateRobotRL(t, x, iterIndex, indexSelector, params)
                 drawnow
                 pause(0.03);
             end
-        end
     end
     
 function shape = linkshape(l)
